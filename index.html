@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operation Backstory - WW2 Spy Deduction Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .stencil-font {
+            font-family: 'Special Elite', cursive, monospace;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 35px rgba(239, 68, 68, 0.8); }
+        }
+        .spy-glow {
+            animation: pulse-glow 1.5s infinite;
+        }
+        @keyframes stamp-in {
+            0% { transform: scale(3) rotate(-15deg); opacity: 0; }
+            60% { transform: scale(0.9) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .stamp-animation {
+            animation: stamp-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="bg-stone-950 text-stone-100 min-h-full flex flex-col selection:bg-amber-700 selection:text-white">
+
+    <header class="bg-stone-900 border-b border-stone-800 py-4 px-6 shadow-xl sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-600 text-stone-950 p-2.5 rounded-xl font-black stencil-font text-xl shadow-inner">
+                    OSS
+                </div>
+                <div>
+                    <h1 class="stencil-font text-xl md:text-2xl text-amber-500 tracking-wider">OPERATION BACKSTORY</h1>
+                    <p class="text-xs text-stone-400 font-medium">WW2 Counter-Intelligence & Deception Drill</p>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center space-x-2 text-xs bg-stone-800 text-stone-300 px-3 py-1.5 rounded-lg border border-stone-700 font-mono">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>SECURE TERMINAL</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto p-4 sm:p-6 md:p-8 space-y-8">
+
+        <section class="bg-stone-900/90 border border-stone-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden backdrop-blur-sm">
+            <!-- Decorative stamp badge in background -->
+            <div class="absolute -right-8 -bottom-8 opacity-5 pointer-events-none select-none stencil-font text-9xl text-stone-200">
+                CLASSIFIED
+            </div>
+
+            <div class="flex items-center space-x-3 mb-6 relative z-10">
+                <div class="p-2 bg-amber-500/10 text-amber-500 rounded-lg border border-amber-500/20">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="stencil-font text-xl sm:text-2xl text-amber-400">MISSION BRIEFING & RULES</h2>
+                    <p class="text-xs text-stone-400">Read carefully before proceeding to your individual briefing.</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-stone-300 text-sm sm:text-base leading-relaxed bg-stone-950/50 p-5 sm:p-6 rounded-xl border border-stone-800/80 relative z-10">
+                <p>
+                    Each team will send one member at a time to meet with the instructor in the hallway, the instructor will secretly tell that group if they are the spy or a regular person. Once all have been briefed, teams will break out into their four teams and ask each other background questions—spies should make up their entire backstory (except name, rank, etc.), while everyone else must tell the truth. Examples of personal things to make up, where they are from / hometown, hobbies, favorite sport teams, family. Afterward, all groups will reconvene and vote on who they think the spy was. This is based off of in WW2 when Gi’s would ask about things that only Americans would know. No protected categories. Their may be 0 or more than 1 spy per team.
+                </p>
+            </div>
+        </section>
+
+        <section class="bg-gradient-to-b from-stone-900 to-stone-950 border border-stone-800 rounded-2xl p-6 sm:p-10 text-center shadow-2xl relative">
+            <div class="max-w-md mx-auto space-y-6">
+                <div>
+                    <span class="text-xs font-mono tracking-widest text-amber-500 uppercase">Secure Role Assignment Terminal</span>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-stone-100 mt-1">Determine Your Directive</h3>
+                    <p class="text-sm text-stone-400 mt-1">Tap the button below in turns when summoned by your commanding officer.</p>
+                </div>
+
+                <!-- Spinner Display Screen -->
+                <div id="spinner-screen" class="h-44 sm:h-52 bg-stone-950 border-2 border-stone-800 rounded-2xl flex flex-col items-center justify-center p-6 relative overflow-hidden shadow-inner">
+                    <!-- Scanline effect overlay -->
+                    <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px] pointer-events-none opacity-60"></div>
+                    
+                    <!-- Default initial state -->
+                    <div id="idle-display" class="space-y-2 z-10 transition-opacity duration-300">
+                        <div class="w-12 h-12 mx-auto rounded-full bg-stone-900 border border-stone-800 flex items-center justify-center text-stone-500">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-stone-400 font-mono text-sm tracking-wide">READY FOR ENCRYPTION</p>
+                    </div>
+
+                    <!-- Spinning / Rolling state text -->
+                    <div id="spinning-display" class="hidden space-y-2 z-10">
+                        <div class="w-12 h-12 mx-auto rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 animate-spin">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                        </div>
+                        <p id="slot-ticker" class="stencil-font text-xl sm:text-2xl text-amber-400 tracking-wider">COMPUTING...</p>
+                    </div>
+
+                    <!-- Result Reveal state -->
+                    <div id="result-display" class="hidden z-10 text-center w-full">
+                        <div id="result-box" class="p-4 rounded-xl border transition-all duration-300">
+                            <span id="result-subtitle" class="text-xs uppercase font-mono tracking-widest block mb-1">ASSIGNED CLASSIFICATION</span>
+                            <h2 id="result-title" class="stencil-font text-4xl sm:text-5xl font-black tracking-wider"></h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls & Buttons -->
+                <div class="space-y-3">
+                    <button id="role-btn" onclick="startRoleSpinner()" class="w-full py-5 px-8 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-extrabold text-2xl sm:text-3xl rounded-2xl shadow-xl transform active:scale-95 transition-all duration-150 stencil-font tracking-wider border-2 border-amber-400 flex items-center justify-center space-x-3 cursor-pointer">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>ROLE</span>
+                    </button>
+
+                    <div class="flex items-center justify-end text-xs text-stone-500 px-1 font-mono">
+                        <!-- Probability text removed per instructions -->
+                        <button onclick="resetTerminal()" class="text-stone-400 hover:text-stone-200 underline cursor-pointer">Reset Terminal</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center py-6 border-t border-stone-900 text-xs text-stone-500 font-mono">
+            <p>OPERATION BACKSTORY • EDUCATIONAL DECEPTION TRAINING SIMULATION</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // Web Audio API sound generator
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // Suspense sound during spinning
+        function playTickSound(frequency = 400, type = 'sine', duration = 0.05) {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = frequency;
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.log("Audio skipped", e);
+            }
+        }
+
+        // Identical reveal sound for both SPY and NOT SPY outcomes to prevent giving away the role
+        function playRevealSound() {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                // A neutral, mechanical "clack" sound suitable for both outcomes
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+                
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } catch (e) {
+                console.log("Audio skipped", e);
+            }
+        }
+
+        let isSpinning = false;
+
+        function startRoleSpinner() {
+            if (isSpinning) return;
+            isSpinning = true;
+
+            const btn = document.getElementById('role-btn');
+            const idleDisplay = document.getElementById('idle-display');
+            const spinningDisplay = document.getElementById('spinning-display');
+            const resultDisplay = document.getElementById('result-display');
+            const slotTicker = document.getElementById('slot-ticker');
+
+            // Disable button during spin
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            // Switch UI views
+            idleDisplay.classList.add('hidden');
+            resultDisplay.classList.add('hidden');
+            spinningDisplay.classList.remove('hidden');
+
+            // Determine outcome: exactly 20% chance for SPY
+            const isSpy = Math.random() < 0.20;
+
+            // Slot ticker animation words
+            const options = ["OPERATIVE", "CITIZEN", "AGENT", "REGULAR", "OFFICER", "RECRUIT", "PATRIOT"];
+            let elapsed = 0;
+            const duration = 2500; // 2.5 seconds total
+            const intervalTime = 80;
+
+            const tickerInterval = setInterval(() => {
+                elapsed += intervalTime;
+                const randomWord = options[Math.floor(Math.random() * options.length)];
+                slotTicker.textContent = randomWord;
+                playTickSound(300 + Math.random() * 200, 'square', 0.04);
+
+                if (elapsed >= duration) {
+                    clearInterval(tickerInterval);
+                    finishSpinning(isSpy);
+                }
+            }, intervalTime);
+        }
+
+        function finishSpinning(isSpy) {
+            isSpinning = false;
+            const btn = document.getElementById('role-btn');
+            const spinningDisplay = document.getElementById('spinning-display');
+            const resultDisplay = document.getElementById('result-display');
+            const resultBox = document.getElementById('result-box');
+            const resultTitle = document.getElementById('result-title');
+            const resultSubtitle = document.getElementById('result-subtitle');
+
+            spinningDisplay.classList.add('hidden');
+            resultDisplay.classList.remove('hidden');
+
+            // Play the exact same sound regardless of outcome
+            playRevealSound();
+
+            if (isSpy) {
+                resultBox.className = "p-5 rounded-xl border-2 border-red-600 bg-red-950/40 spy-glow stamp-animation";
+                resultSubtitle.className = "text-xs uppercase font-mono tracking-widest text-red-400 mb-1";
+                resultTitle.className = "stencil-font text-4xl sm:text-6xl font-black text-red-500 tracking-wider";
+                resultTitle.textContent = "SPY";
+            } else {
+                resultBox.className = "p-5 rounded-xl border-2 border-emerald-600 bg-emerald-950/40 stamp-animation";
+                resultSubtitle.className = "text-xs uppercase font-mono tracking-widest text-emerald-400 mb-1";
+                resultTitle.className = "stencil-font text-3xl sm:text-5xl font-black text-emerald-400 tracking-wider";
+                resultTitle.textContent = "NOT SPY";
+            }
+
+            // Re-enable button
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            btn.querySelector('span').textContent = "SPIN AGAIN";
+        }
+
+        function resetTerminal() {
+            if (isSpinning) return;
+            const idleDisplay = document.getElementById('idle-display');
+            const spinningDisplay = document.getElementById('spinning-display');
+            const resultDisplay = document.getElementById('result-display');
+            const btn = document.getElementById('role-btn');
+
+            idleDisplay.classList.remove('hidden');
+            spinningDisplay.classList.add('hidden');
+            resultDisplay.classList.add('hidden');
+            btn.querySelector('span').textContent = "ROLE";
+        }
+    </script>
+</body>
+</html>
